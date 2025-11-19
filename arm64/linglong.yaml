@@ -1,0 +1,40 @@
+version: '1'
+package:
+  id: com.sublimetext.sublime-text-4
+  name: sublime-text-4
+  version: 4200.0.0.0
+  kind: app
+  description: 'Sublime Text是一款流行的代码编辑器软件，它具有漂亮的用户界面和强大的功能，例如代码缩略图，Python的插件，代码段、语法高亮等。还可自定义快捷键绑定，菜单和工具栏等。Sublime
+    Text 是一个跨平台的编辑器，它有许多亮点，诸如：轻量级，强大的api和包生态，性能高，极致体验等等。
+
+    '
+base: org.deepin.base/25.2.1
+command:
+- /opt/apps/com.sublimetext.sublime-text-4/files/bin/sublime_text
+build: |
+  # 解压sublime-text deb包
+  dpkg-deb -X linglong/sources/sublime-text_build-4200_arm64.deb $PREFIX/
+
+  # 移动图标、桌面文件和可执行文件到合适位置
+  mkdir -p $PREFIX/share
+  mv $PREFIX/usr/share/icons $PREFIX/usr/share/applications $PREFIX/share/
+  rm -r $PREFIX/usr
+
+  # 重命名图标文件，避免和其他应用冲突
+  find $PREFIX/share/icons -type f -name "sublime-text.png" | while read line; do
+    newpath=$(echo $line | sed "s#sublime-text\.png#$LINGLONG_APPID.png#")
+    mv $line $newpath
+  done
+  # 重命名.desktop文件，避免和其他应用冲突
+  mv $PREFIX/share/applications/sublime_text.desktop $PREFIX/share/applications/$LINGLONG_APPID.desktop
+  # 修改.desktop文件内容
+  sed -i "s#Icon=sublime-text#Icon=$LINGLONG_APPID#g" $PREFIX/share/applications/$LINGLONG_APPID.desktop
+  sed -i "s#Exec=/opt/sublime_text/sublime_text#Exec=$PREFIX/bin/sublime_text#g" $PREFIX/share/applications/$LINGLONG_APPID.desktop
+
+  mv $PREFIX/opt/* $PREFIX/bin/
+  rm -r $PREFIX/opt
+sources:
+- kind: file
+  url: https://download.sublimetext.com/sublime-text_build-4200_arm64.deb
+  digest: cedc9b391c31e12d60070eb2a43b31fa81ec7fb8fd6d75c000a035a7749b51f9
+  name: sublime-text_build-4200_arm64.deb

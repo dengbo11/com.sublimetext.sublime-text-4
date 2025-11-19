@@ -1,0 +1,6 @@
+{
+  "app_name": "Sublime Text",
+  "version_url": "https://www.sublimetext.com/download",
+  "version_pattern": "Build\\s+(\\d{4})",
+  "download_url_template": "https://download.sublimetext.com/sublime-text_build-{version}_{arch}.deb"
+}
